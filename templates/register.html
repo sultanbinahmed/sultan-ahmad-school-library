@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}تسجيل جديد - مدرسة السيد سلطان بن أحمد للتعليم الأساسي{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>تسجيل حساب جديد</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="name">الاسم الكامل</label>
+            {{ form.name(class="form-control", placeholder="أدخل اسمك الكامل") }}
+            {% if form.name.errors %}
+                {% for error in form.name.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="username">اسم المستخدم</label>
+            {{ form.username(class="form-control", placeholder="أدخل اسم المستخدم") }}
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="password">كلمة المرور</label>
+            {{ form.password(class="form-control", placeholder="أدخل كلمة المرور") }}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">تأكيد كلمة المرور</label>
+            {{ form.confirm_password(class="form-control", placeholder="أعد إدخال كلمة المرور") }}
+            {% if form.confirm_password.errors %}
+                {% for error in form.confirm_password.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="grade">الصف</label>
+            {{ form.grade(class="form-control") }}
+            {% if form.grade.errors %}
+                {% for error in form.grade.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">تسجيل</button>
+    </form>
+    <div class="auth-links">
+        <p>لديك حساب بالفعل؟ <a href="{{ url_for('login') }}">تسجيل الدخول</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - مدرسة السيد سلطان بن أحمد للتعليم الأساسي{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="book-details">
+        <div class="book-image">
+            <img src="{{ url_for('static', filename='images/book-placeholder.jpg') }}" alt="{{ book.title }}">
+        </div>
+        <div class="book-info">
+            <span class="book-category">{{ book.category.name }}</span>
+            <h2>{{ book.title }}</h2>
+            
+            <div class="book-meta">
+                <p><strong>المؤلف:</strong> {{ book.author }}</p>
+                {% if book.isbn %}
+                <p><strong>الرقم المعياري الدولي:</strong> {{ book.isbn }}</p>
+                {% endif %}
+                {% if book.publication_year %}
+                <p><strong>سنة النشر:</strong> {{ book.publication_year }}</p>
+                {% endif %}
+                <p><strong>الحالة:</strong> 
+                    {% if book.available %}
+                    <span class="status-available">متاح للاستعارة</span>
+                    {% else %}
+                    <span class="status-unavailable">غير متاح حالياً</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <div class="book-description">
+                <h3>وصف الكتاب</h3>
+                <p>{{ book.description }}</p>
+            </div>
+            
+            {% if current_user.is_authenticated and book.available %}
+            <div class="reservation-box">
+                <h3>حجز الكتاب</h3>
+                <p>يمكنك حجز هذا الكتاب للاستعارة. يرجى ملاحظة أن الحجز متاح فقط خلال أيام الأسبوع العادية (الأحد إلى الخميس).</p>
+                
+                <form method="POST" action="{{ url_for('reserve_book', book_id=book.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="reservation_date">تاريخ الاستعارة</label>
+                        {{ form.reservation_date(class="form-control", type="date") }}
+                        {% if form.reservation_date.errors %}
+                            {% for error in form.reservation_date.errors %}
+                                <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">حجز الكتاب</button>
+                </form>
+            </div>
+            {% elif not current_user.is_authenticated %}
+            <div class="reservation-box">
+                <p>يرجى <a href="{{ url_for('login') }}">تسجيل الدخول</a> لحجز هذا الكتاب.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

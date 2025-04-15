@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة تحكم المسؤول - مدرسة السيد سلطان بن أحمد للتعليم الأساسي{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="admin-sidebar">
+        <ul>
+            <li><a href="{{ url_for('admin.dashboard') }}" class="{% if active_tab == 'dashboard' %}active{% endif %}">الرئيسية</a></li>
+            <li><a href="{{ url_for('admin.users') }}" class="{% if active_tab == 'users' %}active{% endif %}">المستخدمين</a></li>
+            <li><a href="{{ url_for('admin.books') }}" class="{% if active_tab == 'books' %}active{% endif %}">الكتب</a></li>
+            <li><a href="{{ url_for('admin.categories') }}" class="{% if active_tab == 'categories' %}active{% endif %}">التصنيفات</a></li>
+            <li><a href="{{ url_for('admin.reservations') }}" class="{% if active_tab == 'reservations' %}active{% endif %}">حجوزات الكتب</a></li>
+            <li><a href="{{ url_for('admin.resources') }}" class="{% if active_tab == 'resources' %}active{% endif %}">المختبرات وغرف المصادر</a></li>
+            <li><a href="{{ url_for('admin.resource_reservations') }}" class="{% if active_tab == 'resource_reservations' %}active{% endif %}">حجوزات المختبرات</a></li>
+            <li><a href="{{ url_for('admin.borrowing_rules') }}" class="{% if active_tab == 'borrowing_rules' %}active{% endif %}">شروط الاستعارة</a></li>
+        </ul>
+    </div>
+    
+    <div class="admin-content">
+        {% block admin_content %}
+        <h2>لوحة تحكم المسؤول</h2>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>إحصائيات عامة</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ stats.users_count }}</span>
+                        <span class="stat-label">المستخدمين</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ stats.books_count }}</span>
+                        <span class="stat-label">الكتب</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ stats.categories_count }}</span>
+                        <span class="stat-label">التصنيفات</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ stats.reservations_count }}</span>
+                        <span class="stat-label">الحجوزات</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recent-activity">
+            <h3>آخر النشاطات</h3>
+            
+            <div class="activity-section">
+                <h4>آخر الحجوزات</h4>
+                {% if recent_reservations %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>الكتاب</th>
+                            <th>تاريخ الحجز</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in recent_reservations %}
+                        <tr>
+                            <td>{{ reservation.user.name }}</td>
+                            <td>{{ reservation.book.title }}</td>
+                            <td>{{ reservation.reservation_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ reservation.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>لا توجد حجوزات حديثة.</p>
+                {% endif %}
+            </div>
+            
+            <div class="activity-section">
+                <h4>آخر المستخدمين المسجلين</h4>
+                {% if recent_users %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>اسم المستخدم</th>
+                            <th>الدور</th>
+                            <th>تاريخ التسجيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>لا يوجد مستخدمين جدد.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

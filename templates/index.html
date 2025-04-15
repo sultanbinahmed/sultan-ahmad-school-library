@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}الرئيسية - مدرسة السيد سلطان بن أحمد للتعليم الأساسي{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2>مكتبة مدرسة السيد سلطان بن أحمد</h2>
+    <p>استكشف عالم المعرفة من خلال مجموعة متنوعة من الكتب والمصادر التعليمية. يمكنك البحث عن الكتب وحجزها بكل سهولة.</p>
+    <div>
+        <a href="{{ url_for('books') }}" class="btn btn-primary">استعرض الكتب</a>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('register') }}" class="btn btn-secondary">سجل الآن</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <h2>أحدث الكتب</h2>
+    </div>
+    <div class="books-grid">
+        {% for book in latest_books %}
+        <div class="book-card">
+            <div class="book-card-img">
+                <img src="{{ url_for('static', filename='images/book-placeholder.jpg') }}" alt="{{ book.title }}">
+            </div>
+            <div class="book-card-content">
+                <span class="book-category">{{ book.category.name }}</span>
+                <h3>{{ book.title }}</h3>
+                <p>{{ book.author }}</p>
+                <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn btn-primary">التفاصيل</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <h2>تصنيفات الكتب</h2>
+    </div>
+    <div class="categories-grid books-grid">
+        {% for category in categories %}
+        <div class="book-card">
+            <div class="book-card-content">
+                <h3>{{ category.name }}</h3>
+                <p>{{ category.description }}</p>
+                <a href="{{ url_for('category_books', category_id=category.id) }}" class="btn btn-primary">عرض الكتب</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <h2>شروط استعارة الكتب</h2>
+    </div>
+    <div class="borrowing-rules">
+        <div class="auth-container">
+            <h3>قواعد الاستعارة</h3>
+            <ul>
+                <li>يسمح باستعارة الكتب خلال أيام الأسبوع العادية فقط (الأحد إلى الخميس).</li>
+                <li>مدة الاستعارة {{ borrowing_rules.max_days }} أيام كحد أقصى.</li>
+                <li>يمكن استعارة {{ borrowing_rules.max_books }} كتب كحد أقصى في نفس الوقت.</li>
+                <li>يجب المحافظة على الكتب وإعادتها بحالة جيدة.</li>
+                <li>في حالة تأخر إعادة الكتاب، قد يتم تعليق خدمة الاستعارة مؤقتاً.</li>
+            </ul>
+            <p>{{ borrowing_rules.rules_text }}</p>
+            <a href="{{ url_for('borrowing_rules') }}" class="btn btn-secondary">المزيد من التفاصيل</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

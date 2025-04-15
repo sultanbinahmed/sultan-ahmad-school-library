@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}حجز المختبرات وغرف المصادر - مدرسة السيد سلطان بن أحمد للتعليم الأساسي{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="section-title">
+        <h2>حجز المختبرات وغرف المصادر</h2>
+    </div>
+    
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('resources') }}" class="search-form">
+            <div class="form-group">
+                <label for="date">التاريخ</label>
+                <input type="date" name="date" class="form-control" value="{{ request.args.get('date', '') or today }}">
+            </div>
+            <button type="submit" class="btn btn-primary">عرض</button>
+        </form>
+    </div>
+    
+    <div class="resources-container">
+        <h3>المختبرات وغرف المصادر المتاحة</h3>
+        
+        <div class="timetable">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>المورد</th>
+                        {% for i in range(1, 9) %}
+                        <th>الحصة {{ i }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resource in resources %}
+                    <tr>
+                        <td>{{ resource.name }}</td>
+                        {% for i in range(1, 9) %}
+                        <td>
+                            {% if resource.id in reservations and i in reservations[resource.id] %}
+                                <span class="reserved">محجوز</span>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('reserve_resource') }}">
+                                    <input type="hidden" name="resource_id" value="{{ resource.id }}">
+                                    <input type="hidden" name="date" value="{{ request.args.get('date', '') or today }}">
+                                    <input type="hidden" name="period" value="{{ i }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">حجز</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="my-reservations">
+        <h3>حجوزاتي</h3>
+        
+        {% if my_reservations %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>المورد</th>
+                    <th>التاريخ</th>
+                    <th>الحصة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in my_reservations %}
+                <tr>
+                    <td>{{ reservation.resource.name }}</td>
+                    <td>{{ reservation.reservation_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ reservation.period }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('cancel_resource_reservation', reservation_id=reservation.id) }}">
+                            <button type="submit" class="btn btn-sm btn-danger">إلغاء</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>ليس لديك أي حجوزات حالية.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
